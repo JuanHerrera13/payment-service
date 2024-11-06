@@ -25,6 +25,7 @@ public class PaymentController extends RootController {
 
     /**
      * Endpoint to fetch all payments.
+     *
      * @return List of all payments.
      */
     @GetMapping(path = "/payments")
@@ -35,6 +36,7 @@ public class PaymentController extends RootController {
 
     /**
      * Endpoint to fetch a payment by its id.
+     *
      * @param paymentId The id of the payment to fetch.
      * @return The payment with the specified id.
      */
@@ -46,7 +48,20 @@ public class PaymentController extends RootController {
     }
 
     /**
+     * Endpoint to fetch a payment by its cart id.
+     *
+     * @param cartId cartId.
+     * @return the payment with the specified cart id.
+     */
+    @GetMapping(path = "/payments/cart/{cartId}")
+    @ResponseStatus(HttpStatus.OK)
+    public PaymentDto fetchPaymentByCartId(@Valid @PathVariable String cartId) {
+        return paymentServiceImpl.findPaymentByCartId(cartId);
+    }
+
+    /**
      * Endpoint to add a new Payment.
+     *
      * @param paymentCreationDto DTO containing the fields of the payment to be added.
      * @return The added payment.
      */
@@ -58,6 +73,7 @@ public class PaymentController extends RootController {
 
     /**
      * Endpoint to delete a payment.
+     *
      * @param paymentId The ID of the payment to delete.
      */
     @DeleteMapping(path = "/payments/{paymentId}/payment.delete")

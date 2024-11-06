@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -50,10 +51,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentDto addPayment(PaymentCreationDto paymentCreationDto) {
+        paymentRepository.findTopByCartId(paymentCreationDto.getCartId()).ifPresent(_ -> {
+            throw new NotFoundException("Pagamento já existe com o cartId ".concat(paymentCreationDto.getCartId()));
+        });
         Float amount = 0F;
         try {
             final CartDto cartDto = cartApiClient.getCartById(paymentCreationDto.getCartId());
-            for (String bookId: cartDto.getBooksIds()) {
+            for (String bookId : cartDto.getBooksIds()) {
                 bookApiClient.getBookById(bookId);
                 amount += bookApiClient.getBookById(bookId).getPrice();
             }
@@ -75,5 +79,12 @@ public class PaymentServiceImpl implements PaymentService {
         final Payment payment = this.findPaymentById(id);
         paymentRepository.delete(payment);
         log.info("Payment {} deleted.", payment.getId());
+    }
+
+    @Override
+    public PaymentDto findPaymentByCartId(String cartId) {
+        Payment payment = paymentRepository.findTopByCartId(cartId)
+                .orElseThrow(() -> new NotFoundException(Error.NO_PAYMENT_FOUND.getErrorMessage()));
+        return paymentMapper.paymentToPaymentDto(payment);
     }
 }

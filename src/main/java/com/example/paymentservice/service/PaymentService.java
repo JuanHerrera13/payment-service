@@ -17,4 +17,6 @@ public interface PaymentService {
     PaymentDto addPayment(PaymentCreationDto paymentCreationDto);
 
     void deletePayment(String id);
+
+    PaymentDto findPaymentByCartId(String cartId);
 }

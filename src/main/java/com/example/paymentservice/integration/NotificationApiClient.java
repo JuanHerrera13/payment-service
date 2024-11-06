@@ -36,5 +36,4 @@ public class NotificationApiClient {
             throw new RestClientException(e.getMessage());
         }
     }
-
 }
